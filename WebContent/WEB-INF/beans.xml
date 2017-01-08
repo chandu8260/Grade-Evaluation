@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+            http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/aop
+            http://www.springframework.org/schema/aop/spring-aop.xsd
+            http://www.springframework.org/schema/tx
+            http://www.springframework.org/schema/tx/spring-tx.xsd
+            http://www.springframework.org/schema/context 
+            http://www.springframework.org/schema/context/spring-context-3.0.xsd
+            http://www.springframework.org/schema/security
+          http://www.springframework.org/schema/security/spring-security-3.0.3.xsd">
+
+
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location" value="classpath:database.properties"></property>
+	</bean>
+	<!-- configure MessageSource -->
+	<bean id="messageSource"
+		class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basenames">
+			<list>
+				<value>com.mindtree.mce.props.errMessages</value>
+				<value>com.mindtree.mce.props.messages</value>
+				<value>com.mindtree.mce.props.statusMessages</value>
+			</list>
+		</property>
+	</bean>
+
+	<!--
+		configure DataSource with driverClassName, url, username and password
+	-->
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="${driverClassName}"></property>
+		<property name="url" value="${url}"></property>
+		<property name="username" value="${username}"></property>
+		<property name="password" value="${password}"></property>
+	</bean>
+
+	<!-- configure SessionFactory -->
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"></property>
+		<property name="configLocation">
+			<value>classpath:hibernate.cfg.xml</value>
+		</property>
+	</bean>
+
+	<!-- configure Hibernate Template-->
+	<bean id="hibernateTemplate" class="org.springframework.orm.hibernate3.HibernateTemplate">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+	<!--  configure Annotation based Hibernate Transaction-->
+	<!--<tx:annotation-driven transaction-manager="transactionManager" />
+	-->
+	<bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+	<bean id="service" class="com.mindtree.mce.service.impl.GradeEvaluationServiceImpl">
+		<property name="dao" ref="dao"/>
+		<property name="calculator" ref="calculator"/>
+	</bean>
+	<bean id="calculator" class="com.mindtree.mce.service.impl.GradeCalculatorImpl"/>
+	<bean id="dao" class="com.mindtree.mce.dao.impl.GradeEvaluationDaoImpl">
+		<property name="ht" ref="hibernateTemplate" />
+	</bean>
+	<bean id="studentValidator" class="com.mindtree.mce.validator.StudentValidator"/>
+	<bean id="scoreValidator" class="com.mindtree.mce.validator.ScoreValidator"/>
+</beans>

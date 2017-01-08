@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.mindtree.mce.entity">
+	<class name="Student">
+		<id name="regdNo">
+			<generator class="assigned"></generator>
+		</id>
+		<property name="studentName" type="string"></property>
+		<property name="address" type="string"></property>
+		<property name="phoneNo" type="long"></property>
+		<set name="scores" cascade="save-update" lazy="false">
+			<key column="regdno_fk"></key>
+			<one-to-many class="Score"></one-to-many>
+		</set>
+	</class>
+</hibernate-mapping>

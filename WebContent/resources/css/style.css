@@ -1,0 +1,9 @@
+@CHARSET "ISO-8859-1";
+
+.errClass {
+	color: red;
+}
+
+.msgClass {
+	color: green;
+}
